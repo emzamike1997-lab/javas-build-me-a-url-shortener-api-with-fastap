@@ -1,0 +1,48 @@
+```yml
+version: '3'
+services:
+  app:
+    build: .
+    ports:
+      - "8000:8000"
+    depends_on:
+      - redis
+    environment:
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+  redis:
+    image: redis:alpine
+    ports:
+      - "6379:6379"
+```
+
+### Running the Application
+To run the application, navigate to the project directory and run the following command:
+```bash
+docker-compose up --build
+```
+This will start the application and make it available at `http://localhost:8000`. You can use a tool like `curl` to test the API endpoints.
+
+### Example Usage
+To shorten a URL, send a `POST` request to `http://localhost:8000/shorten` with the original URL in the request body:
+```bash
+curl -X POST -H "Content-Type: application/json" -d '{"original_url": "https://www.example.com"}' http://localhost:8000/shorten
+```
+This will return a response with the shortened URL:
+```json
+{
+  "original_url": "https://www.example.com",
+  "shortened_url": "abc123"
+}
+```
+To get the original URL from a shortened URL, send a `GET` request to `http://localhost:8000/{shortened_url}`:
+```bash
+curl -X GET http://localhost:8000/abc123
+```
+This will return a response with the original URL:
+```json
+{
+  "original_url": "https://www.example.com",
+  "shortened_url": "abc123"
+}
+```
